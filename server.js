@@ -11,6 +11,7 @@ app.use(bodyParser.json());
 
 const port = process.env.PORT || 8080;
 
+// Connect to our database
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/foo');
 const Product = require('./product');
@@ -19,18 +20,22 @@ const Category = require('./category');
 const router = express.Router();
 
 router.use((req, res, next) => {
+
+  // Add CORS Headers, so browser will correctly handle responses
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 	next();
 });
 
 router.get('/', (req, res) => {
-  res.json({ message: 'API response' });
+  res.json({ message: 'API for "my-app"' });
 });
 
+// Routes for products
 router.route('/products')
 	.post((req, res) => {
 		const product = new Product();
+		product.category = req.body.category;
 		product.name = req.body.name;
 		product.salePrice = req.body.salePrice;
 		product.price = req.body.price;
@@ -40,11 +45,11 @@ router.route('/products')
         res.send(err);
       }
 
-      res.json({ message: 'Product created!' });
+      res.json({ message: 'Продукт успешно добавлен' });
 		});
 	})
 	.get((req, res) => {
-		Product.find((err, products) => {
+		Product.find({category: req.query.category_id}, (err, products) => {
 			if (err) {
         res.send(err);
       }
@@ -75,7 +80,7 @@ router.route('/products/:product_id')
           res.send(err);
         }
 
-				res.json({ message: 'Product updated!' });
+				res.json({ message: 'Продукт успешно обновлён' });
 			});
 
 		});
@@ -88,73 +93,73 @@ router.route('/products/:product_id')
         res.send(err);
       }
 
-			res.json({ message: 'Successfully deleted' });
+			res.json({ message: 'Продукт удалён' });
 		});
 	});
 
-  router.route('/categories')
-  	.post((req, res) => {
-  		const category = new Category();
-  		category.name = req.body.name;
+// Routes for categories
+router.route('/categories')
+	.post((req, res) => {
+		const category = new Category();
+		category.name = req.body.name;
 
-  		category.save(function(err) {
-  			if (err) {
+		category.save(function(err) {
+			if (err) {
+        res.send(err);
+      }
+
+      res.json({ message: 'Категория успешно создана' });
+		});
+	})
+	.get((req, res) => {
+		Category.find(function(err, categories) {
+			if (err) {
+        res.send(err);
+      }
+
+			res.json(categories);
+		});
+	});
+
+router.route('/categories/:category_id')
+	.get((req, res) => {
+		Category.findById(req.params.category_id, (err, category) => {
+			if (err) {
+        res.send(err);
+      }
+
+			res.json(category);
+		});
+	})
+	.put((req, res) => {
+		Category.findById(req.params.product_id, (err, category) => {
+			if (err) {
+        res.send(err);
+      }
+
+			category.name = req.body.name;
+			category.save((err) => {
+				if (err) {
           res.send(err);
         }
 
-        res.json({ message: 'Category created!' });
-  		});
-  	})
-  	.get((req, res) => {
-  		Category.find(function(err, categories) {
-  			if (err) {
-          res.send(err);
-        }
+				res.json({ message: 'Категория изменена' });
+			});
 
-  			res.json(categories);
-  		});
-  	});
+		});
+	})
+	.delete((req, res) => {
+		Category.remove({
+			_id: req.params.category_id
+		}, (err, category) => {
+			if (err) {
+        res.send(err);
+      }
 
-    router.route('/categories/:category_id')
-    	.get((req, res) => {
-    		Category.findById(req.params.category_id, (err, category) => {
-    			if (err) {
-            res.send(err);
-          }
-
-    			res.json(category);
-    		});
-    	})
-    	.put((req, res) => {
-    		Category.findById(req.params.product_id, (err, category) => {
-    			if (err) {
-            res.send(err);
-          }
-
-    			category.name = req.body.name;
-    			category.save((err) => {
-    				if (err) {
-              res.send(err);
-            }
-
-    				res.json({ message: 'Category updated!' });
-    			});
-
-    		});
-    	})
-    	.delete((req, res) => {
-    		Category.remove({
-    			_id: req.params.category_id
-    		}, function(err, category) {
-    			if (err) {
-            res.send(err);
-          }
-
-    			res.json({ message: 'Successfully deleted' });
-    		});
-    	});
+			res.json({ message: 'Категория удалена' });
+		});
+	});
 
 app.use('/api', router);
 
 app.listen(port);
-console.log('Magic happens on port ' + port);
