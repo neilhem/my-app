@@ -14,10 +14,13 @@ const port = process.env.PORT || 8080;
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/foo');
 const Product = require('./product');
+const Category = require('./category');
 
 const router = express.Router();
 
 router.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 	next();
 });
 
@@ -32,7 +35,7 @@ router.route('/products')
 		product.salePrice = req.body.salePrice;
 		product.price = req.body.price;
 
-		product.save(function(err) {
+		product.save((err) => {
 			if (err) {
         res.send(err);
       }
@@ -41,7 +44,7 @@ router.route('/products')
 		});
 	})
 	.get((req, res) => {
-		Product.find(function(err, products) {
+		Product.find((err, products) => {
 			if (err) {
         res.send(err);
       }
@@ -52,7 +55,7 @@ router.route('/products')
 
 router.route('/products/:product_id')
 	.get((req, res) => {
-		Product.findById(req.params.bear_id, (err, product) => {
+		Product.findById(req.params.product_id, (err, product) => {
 			if (err) {
         res.send(err);
       }
@@ -62,13 +65,12 @@ router.route('/products/:product_id')
 	})
 	.put((req, res) => {
 		Product.findById(req.params.product_id, (err, product) => {
-
 			if (err) {
         res.send(err);
       }
 
 			product.name = req.body.name;
-			product.save(function(err) {
+			product.save((err) => {
 				if (err) {
           res.send(err);
         }
@@ -81,7 +83,7 @@ router.route('/products/:product_id')
 	.delete((req, res) => {
 		Product.remove({
 			_id: req.params.product_id
-		}, function(err, bear) {
+		}, function(err, product) {
 			if (err) {
         res.send(err);
       }
@@ -89,6 +91,68 @@ router.route('/products/:product_id')
 			res.json({ message: 'Successfully deleted' });
 		});
 	});
+
+  router.route('/categories')
+  	.post((req, res) => {
+  		const category = new Category();
+  		category.name = req.body.name;
+
+  		category.save(function(err) {
+  			if (err) {
+          res.send(err);
+        }
+
+        res.json({ message: 'Category created!' });
+  		});
+  	})
+  	.get((req, res) => {
+  		Category.find(function(err, categories) {
+  			if (err) {
+          res.send(err);
+        }
+
+  			res.json(categories);
+  		});
+  	});
+
+    router.route('/categories/:category_id')
+    	.get((req, res) => {
+    		Category.findById(req.params.category_id, (err, category) => {
+    			if (err) {
+            res.send(err);
+          }
+
+    			res.json(category);
+    		});
+    	})
+    	.put((req, res) => {
+    		Category.findById(req.params.product_id, (err, category) => {
+    			if (err) {
+            res.send(err);
+          }
+
+    			category.name = req.body.name;
+    			category.save((err) => {
+    				if (err) {
+              res.send(err);
+            }
+
+    				res.json({ message: 'Category updated!' });
+    			});
+
+    		});
+    	})
+    	.delete((req, res) => {
+    		Category.remove({
+    			_id: req.params.category_id
+    		}, function(err, category) {
+    			if (err) {
+            res.send(err);
+          }
+
+    			res.json({ message: 'Successfully deleted' });
+    		});
+    	});
 
 app.use('/api', router);
 
