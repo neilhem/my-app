@@ -24,6 +24,7 @@ router.use((req, res, next) => {
   // Add CORS Headers, so browser will correctly handle responses
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
 	next();
 });
 
@@ -60,7 +61,7 @@ router.route('/products')
 
 router.route('/products/:product_id')
 	.get((req, res) => {
-		Product.findById(req.params.product_id, (err, product) => {
+		Product.find({id: req.params.product_id}, (err, product) => {
 			if (err) {
         res.send(err);
       }
@@ -69,12 +70,15 @@ router.route('/products/:product_id')
 		});
 	})
 	.put((req, res) => {
-		Product.findById(req.params.product_id, (err, product) => {
+		Product.find({id: req.params.product_id}, (err, product) => {
 			if (err) {
         res.send(err);
       }
 
-			product.name = req.body.name;
+      product.category = req.body.category;
+  		product.name = req.body.name;
+  		product.salePrice = req.body.salePrice;
+  		product.price = req.body.price;
 			product.save((err) => {
 				if (err) {
           res.send(err);
@@ -87,8 +91,8 @@ router.route('/products/:product_id')
 	})
 	.delete((req, res) => {
 		Product.remove({
-			_id: req.params.product_id
-		}, function(err, product) {
+      id: req.params.product_id
+		}, (err, product) => {
 			if (err) {
         res.send(err);
       }

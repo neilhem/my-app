@@ -2,8 +2,17 @@
   <div class="row">
     <div class="col-3">
       <ul class="nav flex-column">
-        <li class="nav-item" *ngFor="let category of $categories | async">
-          <a class="nav-link" href="#">{{category.name}}</a>
+        <li class="d-flex nav-item" *ngFor="let category of $categories | async">
+          <button class="close" type="button" aria-label="Удалить">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <a class="nav-link" [routerLink]="['./']" [queryParams]="{category_id: category.category_id}">
+            {{category.name}}
+          </a>
+
+        </li>
+        <li class="d-flex nav-item">
+          <a class="nav-link" [routerLink]="['./']" [queryParams]="{}">Без категории</a>
         </li>
       </ul>
     </div>
@@ -30,8 +39,8 @@
             <td>{{product.salePrice}}</td>
             <td>{{product.price}}</td>
             <td>
-              <button class="btn btn-secondary">Удалить</button>
-              <button class="btn btn-secondary">Изменить</button>
+              <a class="btn btn-secondary" [routerLink]="[{outlets: {popup: [product.id, 'delete']}}]">Удалить</a>
+              <a class="btn btn-secondary" [routerLink]="[{outlets: {popup: [product.id, 'edit']}}]">Изменить</a>
             </td>
           </tr>
         </tbody>
@@ -50,7 +59,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="createCategory" (ngSubmit)="createCategoryOnSubmit(createCategory)" novalidate>
+        <form [formGroup]="createCategory" *ngIf="!createCategorySubmitted" (ngSubmit)="createCategoryOnSubmit(createCategory)" novalidate>
           <div class="form-group">
             <label class="sr-only" for="categoryCreateInputName">Название</label>
             <input class="form-control" id="categoryCreateInputName" formControlName="name" type="text" placeholder="Название">
@@ -59,6 +68,39 @@
             <button class="btn btn-secondary" type="submit">Сохранить</button>
           </div>
         </form>
+
+        <div class="" *ngIf="createCategorySubmitted">
+          <h3 class="title">{{message}}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" bsModal #categoryDeleteModal="bs-modal" tabindex="-1" role="dialog" aria-labelledby="CategoryCreateModal" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Хотите удалить категорию</h4>
+        <button class="close" type="button" aria-label="Закрыть" (click)="categoryDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="deleteCategory" *ngIf="!deleteCategorySubmitted" (ngSubmit)="deleteCategoryOnSubmit(deleteCategory)" novalidate>
+          <div class="form-group">
+            <label class="sr-only" for="categoryCreateInputName">Название</label>
+            <input class="form-control" id="categoryCreateInputName" formControlName="id" type="text" placeholder="Название">
+          </div>
+          <div class="text-center">
+            <button class="btn btn-secondary" type="submit">Да</button>
+            <button class="btn btn-secondary" (click)="categoryDeleteModal.hide()" type="button">Нет</button>
+          </div>
+        </form>
+
+        <div class="" *ngIf="deleteCategorySubmitted">
+          <h3 class="title">{{message}}</h3>
+        </div>
       </div>
     </div>
   </div>
@@ -74,7 +116,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="createForm" (ngSubmit)="createOnSubmit(createForm)" novalidate>
+        <form [formGroup]="createForm" *ngIf="!createProductSubmitted" (ngSubmit)="createOnSubmit(createForm)" novalidate>
           <div class="form-group">
             <label class="sr-only" for="createInputName">Название</label>
             <select class="custom-select form-control" formControlName="category">
@@ -100,6 +142,10 @@
             <button class="btn btn-secondary" type="submit">Сохранить</button>
           </div>
         </form>
+
+        <div class="" *ngIf="createProductSubmitted">
+          <h3 class="title">{{message}}</h3>
+        </div>
       </div>
     </div>
   </div>

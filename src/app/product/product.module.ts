@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ModalModule } from 'ng2-bootstrap/modal';
 
 import { ProductRoutingModule } from './product-routing.module';
+import { ProductComponent } from './product.component';
 import { ProductListComponent } from './product-list/product-list.component';
-import { ProductService } from '../shared/product.service';
 
 @NgModule({
   imports: [
@@ -14,7 +14,9 @@ import { ProductService } from '../shared/product.service';
     ReactiveFormsModule,
     ProductRoutingModule,
   ],
-  declarations: [ProductListComponent],
-  providers: [ProductService],
+  declarations: [
+    ProductComponent,
+    ProductListComponent,
+  ],
 })
 export class ProductModule { }
