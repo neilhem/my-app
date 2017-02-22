@@ -61,7 +61,13 @@ router.route('/products')
 		});
 	})
 	.get((req, res) => {
-		Product.find({category: req.query.category_id}, (err, products) => {
+    let query = {};
+
+    if (req.query.category_id) {
+      query.category = req.query.category_id;
+    }
+
+		Product.find(query, (err, products) => {
 			if (err) {
         res.send(err);
       }
