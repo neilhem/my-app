@@ -17,16 +17,22 @@ mongoose.connect('mongodb://localhost:27017/foo');
 const Product = require('./product');
 const Category = require('./category');
 
-const router = express.Router();
-
-router.use((req, res, next) => {
-
+app.all('/api/*', (req, res, next) => {
   // Add CORS Headers, so browser will correctly handle responses
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-	next();
+  res.set({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+    'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE, OPTIONS',
+  });
+
+  if (req.method == 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
 });
+
+const router = express.Router();
 
 router.get('/', (req, res) => {
   res.json({ message: 'API for "my-app"' });
@@ -107,7 +113,7 @@ router.route('/categories')
 		const category = new Category();
 		category.name = req.body.name;
 
-		category.save(function(err) {
+		category.save((err) => {
 			if (err) {
         res.send(err);
       }
@@ -116,7 +122,7 @@ router.route('/categories')
 		});
 	})
 	.get((req, res) => {
-		Category.find(function(err, categories) {
+		Category.find((err, categories) => {
 			if (err) {
         res.send(err);
       }
@@ -127,7 +133,7 @@ router.route('/categories')
 
 router.route('/categories/:category_id')
 	.get((req, res) => {
-		Category.findById(req.params.category_id, (err, category) => {
+		Category.find({category_id: req.params.category_id}, (err, category) => {
 			if (err) {
         res.send(err);
       }
@@ -136,7 +142,7 @@ router.route('/categories/:category_id')
 		});
 	})
 	.put((req, res) => {
-		Category.findById(req.params.product_id, (err, category) => {
+		Category.find({category_id: req.params.category_id}, (err, category) => {
 			if (err) {
         res.send(err);
       }
@@ -154,7 +160,7 @@ router.route('/categories/:category_id')
 	})
 	.delete((req, res) => {
 		Category.remove({
-			_id: req.params.category_id
+			category_id: req.params.category_id
 		}, (err, category) => {
 			if (err) {
         res.send(err);

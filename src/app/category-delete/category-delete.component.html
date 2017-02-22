@@ -1,0 +1,26 @@
+<div class="modal fade" bsModal #modal="bs-modal" tabindex="-1" role="dialog" aria-labelledby="CategoryCreateModal" aria-hidden="true"
+  (onShow)="onModalShow($event)" (onHidden)="onModalHidden($event)">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Хотите удалить категорию</h4>
+        <button class="close" type="button" aria-label="Закрыть" (click)="modal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" *ngIf="!submitted" (ngSubmit)="onSubmit(form)" novalidate>
+          <p>Все товары в этой категории будут помечены "Без категории"</p>
+          <div class="text-center">
+            <button class="btn btn-secondary" type="submit">Да</button>
+            <button class="btn btn-secondary" (click)="modal.hide()" type="button">Нет</button>
+          </div>
+        </form>
+
+        <div class="" *ngIf="submitted">
+          <h3 class="title">{{message}}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

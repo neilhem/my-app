@@ -14,6 +14,7 @@ import { ProductEditComponent } from './product/product-edit/product-edit.compon
 
 import { ProductService } from './shared/product.service';
 import { CategoryService } from './shared/category.service';
+import { CategoryDeleteComponent } from './category-delete/category-delete.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { CategoryService } from './shared/category.service';
     NotFoundComponent,
     ProductDeleteComponent,
     ProductEditComponent,
+    CategoryDeleteComponent,
   ],
   imports: [
     BrowserModule,

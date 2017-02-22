@@ -3,9 +3,9 @@
     <div class="col-3">
       <ul class="nav flex-column">
         <li class="d-flex nav-item" *ngFor="let category of $categories | async">
-          <button class="close" type="button" aria-label="Удалить">
+          <a class="close" [routerLink]="[{outlets: {popup: ['category', category.category_id, 'delete']}}]">
             <span aria-hidden="true">&times;</span>
-          </button>
+          </a>
           <a class="nav-link" [routerLink]="['./']" [queryParams]="{category_id: category.category_id}">
             {{category.name}}
           </a>

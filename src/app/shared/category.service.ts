@@ -28,7 +28,7 @@ export class CategoryService {
 
     headers.set('Content-Type', 'application/json');
 
-    return this.http.put(this.url, {headers}).map(res => res.json());
+    return this.http.delete(`${this.url}/${id}`, {headers}).map(res => res.json());
   }
 
 }

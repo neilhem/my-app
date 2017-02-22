@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ProductDeleteComponent } from './product/product-delete/product-delete.component';
 import { ProductEditComponent } from './product/product-edit/product-edit.component';
+import { CategoryDeleteComponent } from './category-delete/category-delete.component';
 
 const appRoutes: Routes = [
   {
@@ -18,6 +19,11 @@ const appRoutes: Routes = [
   {
     path: ':id/edit',
     component: ProductEditComponent,
+    outlet: 'popup',
+  },
+  {
+    path: 'category/:id/delete',
+    component: CategoryDeleteComponent,
     outlet: 'popup',
   },
   { path: '**', component: NotFoundComponent }
