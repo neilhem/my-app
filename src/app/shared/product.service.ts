@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 @Injectable()
 export class ProductService {
 
-  url = 'http://localhost:8080/api/products';
+  url = '/api/products';
 
   constructor(private http: Http) {}
 
