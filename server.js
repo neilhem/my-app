@@ -1,12 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const path = require('path');
 
 const app = express();
+const ROOT = path.join(path.resolve(__dirname, './'));
+
+app.set('views', __dirname);
+app.set('view engine', 'html');
+app.use(express.static(path.join(ROOT, 'dist'), { index: false }));
 
 app.use(morgan('dev'));
 
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 const port = process.env.PORT || 8080;
@@ -171,5 +176,9 @@ router.route('/categories/:category_id')
 	});
 
 app.use('/api', router);
+
+app.get('/', (req, res) => {
+  res.sendFile('dist/index.html', { root: __dirname });
+});
 
 app.listen(port);
